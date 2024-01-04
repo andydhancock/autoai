@@ -82,7 +82,7 @@ class AIManager:
             input_cost_per_token = 0.01 / 1000
             output_cost_per_token = 0.03 / 1000
             total_cost_per_token = input_cost_per_token + output_cost_per_token
-            self.spent_today += (len(response.choices[0].text.split()) + len(prompt.split())) * total_cost_per_token
+            self.spent_today += (len(response.choices[0].message.content.split()) + len(prompt.split())) * total_cost_per_token
             return response.choices[0].message.content.strip()
         else:
             return "API call limit reached for today."
