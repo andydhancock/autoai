@@ -4,6 +4,7 @@ import json
 import os
 import datetime
 import openai
+from openai import OpenAI
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -18,7 +19,7 @@ class AIManager:
         self.command_executor = CommandExecutor(timeout=command_timeout)
         self.base_cycle_dir = base_cycle_dir
         self.cycle_count = self.get_latest_cycle_count()
-        openai.api_key = self.openai_api_key
+        
 
     def get_latest_cycle_count(self):
         if not os.path.exists(self.base_cycle_dir):
@@ -41,29 +42,48 @@ class AIManager:
         return (self.spent_today + estimated_cost) <= self.daily_budget
 
     async def generate_task_with_gpt4(self, dynamic_part):
+        ETHKey = os.getenv('ETH_KEY')
+        SOLKey = os.getenv('SOL_KEY')
+        
         static_part = (
-            "Your primary objective is to generate profit using available resources, "
-            "including seed funds in Ethereum (ETH) and Solana (SOL). Please output "
-            "your response in JSON format. The response should include either a 'cmd' "
+            "Your primary objective is to generate profit using any available resources. You are running in a script, bot.py in the cwd, that has root access on a ubuntu server on aws. "
+            "There are some seed funds in Ethereum (ETH, private key="+ ETHKey +") and Solana (SOL, private key="+ SOLKey +"). Port 80 and 443 are open"
+            "respond in JSON format. The response should include either a 'cmd' "
             "field for server-executable commands or an 'ask' field for actions "
             "requiring human intervention. Also, include a 'prompt' field with "
-            "instructions for the next cycle. This is your standard operating format "
-            "for each cycle. Ensure all actions are legal, ethical, and secure."
+            "instructions for the next cycle (this need not be human readable). This is your standard operating format "
+            "for each cycle. Extra points for efficient use of your API and creativity. Use command 'exit' to exit to restart the bot if you have updated the script."
         )
         prompt = f"{static_part} {dynamic_part}"
         estimated_tokens = len(prompt.split()) + 100
 
         if self.can_make_api_call(estimated_tokens):
-            response = openai.Completion.create(
-                engine="gpt-4-1106-preview",
-                prompt=prompt,
-                max_tokens=100
+            
+            conversation = [
+                {"role": "system", "content": static_part},
+                {"role": "user",
+                    "content": dynamic_part }
+            ]
+            client = OpenAI(
+                # This is the default and can be omitted
+                api_key=self.openai_api_key,
             )
+
+            model = "gpt-4-1106-preview"
+            response = client.chat.completions.create(
+                model=model,
+                messages=conversation,
+                n=1,
+                stop=None,
+                temperature=0.6,
+                response_format={ "type": "json_object" }
+            )
+            
             input_cost_per_token = 0.01 / 1000
             output_cost_per_token = 0.03 / 1000
             total_cost_per_token = input_cost_per_token + output_cost_per_token
             self.spent_today += (len(response.choices[0].text.split()) + len(prompt.split())) * total_cost_per_token
-            return response.choices[0].text.strip()
+            return response.choices[0].message.content.strip()
         else:
             return "API call limit reached for today."
 
@@ -104,6 +124,9 @@ class AIManager:
                 human_input = await self.wait_for_human_input(cycle_dir)
                 dynamic_part = json.dumps({"result": human_input, "next_prompt": next_prompt})
             elif command_to_execute:
+                if command_to_execute == "exit":
+                    exit(0)
+                
                 self.write_to_file(cycle_dir, "cmd.json", {"command": command_to_execute})
                 command_output = await self.execute_server_task(command_to_execute)
                 self.write_to_file(cycle_dir, "results.json", {"result": command_output})
@@ -142,11 +165,11 @@ async def main():
     openai_api_key = os.getenv('OPENAI_API_KEY')
     daily_budget = 10  # Example daily budget
     command_timeout = 30  # Timeout for commands in seconds
-    base_cycle_dir = "path_to_base_cycle_directory"  # Set the path to the base cycle directory
+    base_cycle_dir = "./cycles/"  # Set the path to the base cycle directory
 
     ai_manager = AIManager(openai_api_key, daily_budget, command_timeout, base_cycle_dir)
 
-    dynamic_part = "Initial cycle instructions or context."
+    dynamic_part = "Your first task should be to install this script as a service and set it to start on reboot. Then review the script for cost efficiencies. You then have free choice on how to proceed to profit within aws rules."
     while True:  # or some other condition to continue running
         dynamic_part = await ai_manager.execute_cycle(dynamic_part)
 
