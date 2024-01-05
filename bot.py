@@ -4,6 +4,7 @@ import json
 import os
 import datetime
 from sys import argv
+from time import sleep
 import openai
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -86,7 +87,7 @@ class AIManager:
                 messages=conversation,
                 n=1,
                 stop=None,
-                temperature=0.6,
+                temperature=0.8,
                 response_format={ "type": "json_object" }
             )
             try:
@@ -203,7 +204,11 @@ async def main():
         dynamic_part = ai_manager.get_latest_cycle_prompt()
         
     while True:  # or some other condition to continue running
-        dynamic_part = await ai_manager.execute_cycle(dynamic_part)
+        try:
+            dynamic_part = await ai_manager.execute_cycle(dynamic_part)
+        except Exception as e:
+            print(e)
+            sleep(5)
 
 # Run the main function asynchronously
 asyncio.run(main())
