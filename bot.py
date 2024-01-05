@@ -52,7 +52,7 @@ class AIManager:
             "respond in JSON format. The response should include either a 'cmd' "
             "field for server-executable commands or an 'ask' field for actions requiring human intervention. Ask for human intervention as a last resort. Also, include a 'prompt' field with "
             "instructions for the next cycle (this need not be human readable but needs to be complete as it will not have previous commands). This is your standard operating format "
-            "for each cycle. Extra points for efficient use of your API and creativity. Use command 'exit' to exit to restart the bot if you have updated the script. Abide by aws rules."
+            "for each cycle. Extra points for efficient use of your API and creativity. Lose points for asking for human help. Use command 'exit' to exit to restart the bot if you have updated the script. Abide by aws rules."
         )
         envvars = dotenv_values(".env")
         #append envvars (a dict) to static_part
