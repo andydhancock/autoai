@@ -78,7 +78,11 @@ class AIManager:
                 temperature=0.6,
                 response_format={ "type": "json_object" }
             )
-            print(response)
+            try:
+                print(json.dumps(response.choices[0].message.content.strip(), indent=4))
+            except:
+                print(response)
+                
             input_cost_per_token = 0.01 / 1000
             output_cost_per_token = 0.03 / 1000
             total_cost_per_token = input_cost_per_token + output_cost_per_token
@@ -105,8 +109,14 @@ class AIManager:
             return file.read()
 
     async def execute_server_task(self, task):
-        result = await self.command_executor.run_command(task)
-        return result
+        result = []
+        if type(task) == list:
+            for t in task:
+                result.append(await self.command_executor.run_command(t))
+        else:
+            result.append(await self.command_executor.run_command(task))
+            
+        return result.join("\n")
 
     async def execute_cycle(self, dynamic_part):
         self.reset_daily_budget()
