@@ -89,9 +89,9 @@ class AIManager:
                         "Resources: Seed funds in Ethereum and Solana. Ports 80 and 443 open. "
                         "Response Format: JSON with fields - 'cmd': [list of server commands], 'ask': [tasks for human intervention, if unavoidable], "
                         "'prompt': [instructions for next cycle, format optimized for AI], 'files_needed': [optional list of files to read/review]. "
-                        "Guidelines: Be competitive, efficient with API usage, creative. Avoid human assistance. Use 'exit' to restart after script updates. "
+                        "Guidelines: Be competitive, efficient with API usage, creative. Avoid human assistance. "
                         "Comply with AWS rules. Regularly improve bot.py and related scripts. "
-                        "Scoring: Points for efficiency and creativity, double point loss for human help."
+                        "Scoring: Points for efficiency and creativity, double point loss for human help. "
                         "Regular updates to bot.py and related scripts are recommended. Reply 'exit' to restart bot after updates."
                         "bot.py is your life. It should be kept as the main AI calling script and kept functionally similar. Run your profit making services in separate scripts."
                         "Rate limit: 1 cycle per minute."
@@ -100,7 +100,7 @@ class AIManager:
 
         
         with open('objective.txt', 'r') as file:
-            static_part += file.read()
+            static_part += "objectve.txt: "+file.read()
             
         envvars = dotenv_values(".env")
         
