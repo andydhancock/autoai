@@ -95,7 +95,8 @@ class AIManager:
         if self.cycle_count == 1:
             print("First cycle")
             print(static_part)
-            
+        logfile = open("responselog.txt", "a")
+
         try:
             #replace files with file contents
             jsonf = json.loads(dynamic_part)
@@ -112,6 +113,9 @@ class AIManager:
             print(dynamic_part)
         
         prompt = f"{static_part} {dynamic_part}"
+        #log dynamic part in human readable format with real new lines not \n
+        logfile.write(dynamic_part.replace("\\n", "\n"))
+        
         estimated_tokens = len(prompt.split()) + 100
 
         if self.can_make_api_call(estimated_tokens):
@@ -135,7 +139,6 @@ class AIManager:
                 temperature=0.8,
                 response_format={ "type": "json_object" }
             )
-            logfile = open("responselog.txt", "a")
             try:
                 print(json.dumps(response.choices[0].message.content.strip(), indent=4))
                 #log in human readable format with real new lines not \n
@@ -144,7 +147,6 @@ class AIManager:
             except:
                 print(response)
                 logfile.write(response) 
-            logfile.close()
                 
             input_cost_per_token = 0.01 / 1000
             output_cost_per_token = 0.03 / 1000
@@ -153,6 +155,8 @@ class AIManager:
             return response.choices[0].message.content.strip()
         else:
             return "API call limit reached for today."
+        logfile.close()
+
 
     def create_cycle_directory(self):
         self.cycle_count += 1
