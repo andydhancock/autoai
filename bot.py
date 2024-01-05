@@ -248,7 +248,7 @@ async def main():
     if len(argv) > 1  and argv[1] == "install":
        dynamic_part += "install this script as a service and set it to start on reboot. Then "
     dynamic_part += " review this script so you know how it works. You then have free choice on how to proceed."
-    if ai_manager.get_latest_cycle_count() > 0:
+    if ai_manager.get_latest_cycle_count() > 1:
         dynamic_part = ai_manager.get_latest_cycle_prompt()
         
     while True:  # or some other condition to continue running
