@@ -182,6 +182,7 @@ class AIManager:
             files_to_read = task_data_json.get("files")
             
             if not next_prompt or next_prompt == "" or next_prompt == "null":
+                print(task_data)
                 raise Exception("Prompt is empty")
                 
             self.write_to_file(cycle_dir, "prompt.txt", next_prompt)
