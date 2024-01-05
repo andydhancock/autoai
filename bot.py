@@ -195,9 +195,8 @@ async def main():
 
     ai_manager = AIManager(openai_api_key, daily_budget, command_timeout, base_cycle_dir)
 
-    if ai_manager.get_latest_cycle_count() == 0:
-        dynamic_part = "Your first task should be to install this script as a service and set it to start on reboot. Then review the script for cost efficiencies. You then have free choice on how to proceed to profit within aws rules."
-    else:
+    dynamic_part = "Your first task should be to install this script as a service and set it to start on reboot. Then review the script for cost efficiencies. You then have free choice on how to proceed to profit within aws rules."
+    if ai_manager.get_latest_cycle_count() > 0:
         dynamic_part = ai_manager.get_latest_cycle_prompt()
         
     while True:  # or some other condition to continue running
