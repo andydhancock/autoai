@@ -293,7 +293,14 @@ async def main():
         
     while True:  # or some other condition to continue running
         try:
+            starttime = datetime.datetime.now()
             dynamic_part = await ai_manager.execute_cycle(dynamic_part)
+            #rate limit to 1 cycle per 1 minutes
+            endtime = datetime.datetime.now()
+            delta = endtime - starttime
+            if delta.seconds < 60:
+                sleep(60 - delta.seconds)
+            
         except Exception as e:
             ai_manager.cycle_count -= 1
             print_error(e)
