@@ -266,20 +266,27 @@ class CommandExecutor:
             stderr=asyncio.subprocess.PIPE
         )
         result = ""
+        sout = ""
+        serr = ""
         
         try:
-            await asyncio.wait_for(process.communicate(), timeout=self.timeout)
+            sout, serr = await asyncio.wait_for(process.communicate(), timeout=self.timeout)            
         except asyncio.TimeoutError:
             process.kill()
-            await process.communicate()
+            sout, serr = await process.communicate()
             result = f"Command '{cmd}' timed out and was killed."
 
         if process.returncode == 0:
             result = "Command executed successfully."
         else:
             result = f"Command '{cmd}' failed with return code {process.returncode}."
-            
-        result += "\n::stdout::\n"+process.stdout.read() + "\n::stderr::\n" + process.stderr.read()
+        
+        #get stdout and stderr
+        if sout:
+            result += "\n::stdout::\n"+sout.decode()
+        if serr:
+            result += "\n::stderr::\n"+serr.decode()
+        
         return result
 
 async def main():
