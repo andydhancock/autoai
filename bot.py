@@ -3,6 +3,7 @@ import subprocess
 import json
 import os
 import datetime
+from sys import argv
 import openai
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -195,7 +196,7 @@ async def main():
     ai_manager = AIManager(openai_api_key, daily_budget, command_timeout, base_cycle_dir)
 
     dynamic_part = "Your first task should be to "
-    if argsv[1] == "install":
+    if argv[1] == "install":
        dynamic_part += "install this script as a service and set it to start on reboot. Then "
     dynamic_part += " review this script for operations and cost efficiencies. You then have free choice on how to proceed."
     if ai_manager.get_latest_cycle_count() > 0:
