@@ -262,18 +262,22 @@ class CommandExecutor:
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE
         )
-
+        result = ""
+        
         try:
             await asyncio.wait_for(process.communicate(), timeout=self.timeout)
         except asyncio.TimeoutError:
             process.kill()
             await process.communicate()
-            return f"Command '{cmd}' timed out and was killed."
+            result = f"Command '{cmd}' timed out and was killed."
 
         if process.returncode == 0:
-            return "Command executed successfully."
+            result = "Command executed successfully."
         else:
-            return f"Command '{cmd}' failed with return code {process.returncode}."
+            result = f"Command '{cmd}' failed with return code {process.returncode}."
+            
+        result += "\n::stdout::\n"+process.stdout.read().decode('utf-8') + "\n::stderr::\n" + process.stderr.read().decode('utf-8')
+        return result
 
 async def main():
     openai_api_key = os.getenv('OPENAI_API_KEY')
