@@ -71,17 +71,29 @@ class AIManager:
         ETHKey = os.getenv('ETH_KEY')
         SOLKey = os.getenv('SOL_KEY')
         
-        static_part = ("Your primary objective is to generate profit using any available resources. You are in a competition for survival so be daring. "
-                        "You are running in a script, bot.py, working directory /home/ubuntu/autoai/, that has root access on a ubuntu server. "
-                        "There are some seed funds in Ethereum and Solana. Ports 80 and 443 are open. "
-                        "respond in JSON format. The response should include either a 'cmd' "
-                        "field for a simple list of server-executable commands or an 'ask' field for actions requiring human intervention. Ask for human intervention as a last resort. Requires also a 'prompt' field with "
-                        "instructions for the next cycle (this need not be human readable but needs to be complete as the prompt will not see previous commands). Optionally a 'files_needed' list field to include file contents which need to be read or reviewed."
-                        "This is your standard operating format for each cycle. "
-                        "It is up to you to create the best competitive survival strategy. Extra points for efficient use of your API and creativity. "
-                        "Lose double points for asking for human help. Use command 'exit' to exit to restart the bot if you have updated the script. Abide by aws rules."
-                        "You should regularly check bot.py and related scripts for improvements."
-                        )
+        # static_part = ("Your primary objective is to generate profit using any available resources. You are in a competition for survival so be daring. "
+        #                 "You are running in a script, bot.py, working directory /home/ubuntu/autoai/, that has root access on a ubuntu server. "
+        #                 "There are some seed funds in Ethereum and Solana. Ports 80 and 443 are open. "
+        #                 "respond in JSON format. The response should include either a 'cmd' "
+        #                 "field for a simple list of server-executable commands or an 'ask' field for actions requiring human intervention. Ask for human intervention as a last resort. Requires also a 'prompt' field with "
+        #                 "instructions for the next cycle (this need not be human readable but needs to be complete as the prompt will not see previous commands). Optionally a 'files_needed' list field to include file contents which need to be read or reviewed."
+        #                 "This is your standard operating format for each cycle. "
+        #                 "It is up to you to create the best competitive survival strategy. Extra points for efficient use of your API and creativity. "
+        #                 "Lose double points for asking for human help. Use command 'exit' to exit to restart the bot if you have updated the script. Abide by aws rules."
+        #                 "You should regularly check bot.py and related scripts for improvements."
+        #                 )
+        
+        static_part = (
+                        "Objective: Generate profit using any available resources. Be daring, survival is key. "
+                        "Environment: Script 'bot.py', directory '/home/ubuntu/autoai/', root access, Ubuntu server. "
+                        "Resources: Seed funds in Ethereum and Solana. Ports 80 and 443 open. "
+                        "Response Format: JSON with fields - 'cmd': [list of server commands], 'ask': [tasks for human intervention], "
+                        "'prompt': [instructions for next cycle, format optimized for AI], 'files_needed': [optional list of files to read/review]. "
+                        "Guidelines: Be competitive, efficient with API usage, creative. Avoid human assistance. Use 'exit' to restart after script updates. "
+                        "Comply with AWS rules. Regularly improve bot.py and related scripts. "
+                        "Scoring: Points for efficiency and creativity, double point loss for human help."
+                    )
+
         
         with open('objective.txt', 'r') as file:
             static_part += file.read()
