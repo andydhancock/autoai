@@ -76,7 +76,7 @@ class AIManager:
                         "There are some seed funds in Ethereum and Solana. Ports 80 and 443 are open. "
                         "respond in JSON format. The response should include either a 'cmd' "
                         "field for a simple list of server-executable commands or an 'ask' field for actions requiring human intervention. Ask for human intervention as a last resort. Requires also a 'prompt' field with "
-                        "instructions for the next cycle (this need not be human readable but needs to be complete as the prompt will not see previous commands). Optionally a 'files' list field to include file contents which need to be read or reviewed."
+                        "instructions for the next cycle (this need not be human readable but needs to be complete as the prompt will not see previous commands). Optionally a 'files_needed' list field to include file contents which need to be read or reviewed."
                         "This is your standard operating format for each cycle. "
                         "It is up to you to create the best competitive survival strategy. Extra points for efficient use of your API and creativity. "
                         "Lose double points for asking for human help. Use command 'exit' to exit to restart the bot if you have updated the script. Abide by aws rules."
@@ -99,8 +99,9 @@ class AIManager:
         try:
             #replace files with file contents
             jsonf = json.loads(dynamic_part)
-            if jsonf and jsonf.get("files"):    
-                files = jsonf.get("files")
+            
+            if jsonf and jsonf.get("files_needed"):    
+                files = jsonf.get("files_needed")
                 if files:
                     for file in files:
                         with open(file, 'r') as f:
@@ -191,7 +192,7 @@ class AIManager:
         if os.path.exists(os.path.join(cycle_dir, 'results.json')):
             with open(os.path.join(cycle_dir, 'results.json'), 'r') as file:
                 results = file.read()
-        return json.dumps({"prompt": prompt, "files": files, "results": results})
+        return json.dumps({"prompt": prompt, "files_needed": files, "results": results})
     
     async def execute_cycle(self, dynamic_part):
         self.reset_daily_budget()
@@ -203,7 +204,7 @@ class AIManager:
             command_to_execute = task_data_json.get("cmd")
             human_task = task_data_json.get("ask")
             next_prompt = task_data_json.get("prompt")
-            files_to_read = task_data_json.get("files")
+            files_to_read = task_data_json.get("files_needed")
             
             if not next_prompt or next_prompt == "" or next_prompt == "null":
                 print(task_data)
@@ -227,7 +228,7 @@ class AIManager:
                 self.write_to_file(cycle_dir, "results.json", {"result": command_output})
         
                 
-            dynamic_part = json.dumps({"result": command_output, "next_prompt": next_prompt, "files": files_to_read})
+            dynamic_part = json.dumps({"result": command_output, "next_prompt": next_prompt, "files_needed": files_to_read})
 
             return dynamic_part
         else:
