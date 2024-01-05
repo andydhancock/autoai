@@ -30,6 +30,13 @@ class AIManager:
         cycle_nums = [int(d.split('_')[1]) for d in cycle_dirs if d.startswith('cycle_')]
         return max(cycle_nums, default=0)
 
+    def get_latest_cycle_dir(self):
+        return os.path.join(self.base_cycle_dir, f"cycle_{self.cycle_count}")
+    
+    def get_latest_cycle_prompt(self):
+        cycle_dir = self.get_latest_cycle_dir()
+        return self.get_prompt(cycle_dir)
+
     def reset_daily_budget(self):
         if datetime.date.today() > self.last_reset:
             self.spent_today = 0
@@ -188,7 +195,11 @@ async def main():
 
     ai_manager = AIManager(openai_api_key, daily_budget, command_timeout, base_cycle_dir)
 
-    dynamic_part = "Your first task should be to install this script as a service and set it to start on reboot. Then review the script for cost efficiencies. You then have free choice on how to proceed to profit within aws rules."
+    if ai_manager.get_latest_cycle_count() == 0:
+        dynamic_part = "Your first task should be to install this script as a service and set it to start on reboot. Then review the script for cost efficiencies. You then have free choice on how to proceed to profit within aws rules."
+    else:
+        dynamic_part = ai_manager.get_latest_cycle_prompt()
+        
     while True:  # or some other condition to continue running
         dynamic_part = await ai_manager.execute_cycle(dynamic_part)
 
