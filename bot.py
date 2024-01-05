@@ -93,6 +93,7 @@ class AIManager:
                         "Comply with AWS rules. Regularly improve bot.py and related scripts. "
                         "Scoring: Points for efficiency and creativity, double point loss for human help."
                         "Regular updates to bot.py and related scripts are recommended. Reply 'exit' to restart bot after updates."
+                        "bot.py is your life. It should be kept as the main AI calling script and kept functionally similar. Run your profit making services in separate scripts."
                         "Rate limit: 1 cycle per minute."
                         
                     )
