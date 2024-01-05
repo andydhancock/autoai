@@ -16,7 +16,12 @@ load_dotenv()
 
 def print_error(e):
     print(e) 
+    
     exc_type, exc_obj, exc_tb = sys.exc_info()
+    #get line number from inside the function
+    exc_tb = exc_tb.tb_next
+    #line_number = exc_tb.tb_lineno
+    
     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
     print(exc_type, fname, exc_tb.tb_lineno)
 
