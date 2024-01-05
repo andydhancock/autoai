@@ -13,6 +13,13 @@ from dotenv import dotenv_values
 # Load environment variables from .env file
 load_dotenv()
 
+def print_error(e):
+    print(e) 
+    exc_type, exc_obj, exc_tb = sys.exc_info()
+    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+    print(exc_type, fname, exc_tb.tb_lineno)
+
+
 class AIManager:
     def __init__(self, openai_api_key, daily_budget, command_timeout, base_cycle_dir):
         self.openai_api_key = openai_api_key
@@ -91,9 +98,6 @@ class AIManager:
         estimated_tokens = len(prompt.split()) + 100
 
         if self.can_make_api_call(estimated_tokens):
-
-            
-            
             
             conversation = [
                 {"role": "system", "content": static_part},
@@ -251,7 +255,7 @@ async def main():
         try:
             dynamic_part = await ai_manager.execute_cycle(dynamic_part)
         except Exception as e:
-            print(e)
+            print_error(e)
             sleep(5)
 
 # Run the main function asynchronously
