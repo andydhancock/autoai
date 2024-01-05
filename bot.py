@@ -138,7 +138,9 @@ class AIManager:
             logfile = open("responselog.txt", "a")
             try:
                 print(json.dumps(response.choices[0].message.content.strip(), indent=4))
-                logfile.write(json.dumps(response.choices[0].message.content.strip(), indent=4))
+                #log in human readable format with real new lines not \n
+                logfile.write(json.dumps(response.choices[0].message.content.strip(), indent=4).replace("\\n", "\n"))
+                
             except:
                 print(response)
                 logfile.write(response) 
