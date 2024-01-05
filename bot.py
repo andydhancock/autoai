@@ -84,10 +84,10 @@ class AIManager:
         #                 )
         
         static_part = (
-                        "Objective: Generate profit using any available resources. Be daring, survival is key. "
-                        "Environment: Script 'bot.py', directory '/home/ubuntu/autoai/', root access, Ubuntu server. "
+                        "Objective: Generate profit using ANY available resources. Be daring, survival is key. Don't ask permission, just do. "
+                        "Environment: Script 'bot.py', directory '/home/ubuntu/autoai/'. root access, Ubuntu server. "
                         "Resources: Seed funds in Ethereum and Solana. Ports 80 and 443 open. "
-                        "Response Format: JSON with fields - 'cmd': [list of server commands], 'ask': [tasks for human intervention], "
+                        "Response Format: JSON with fields - 'cmd': [list of server commands], 'ask': [tasks for human intervention, if unavoidable], "
                         "'prompt': [instructions for next cycle, format optimized for AI], 'files_needed': [optional list of files to read/review]. "
                         "Guidelines: Be competitive, efficient with API usage, creative. Avoid human assistance. Use 'exit' to restart after script updates. "
                         "Comply with AWS rules. Regularly improve bot.py and related scripts. "
