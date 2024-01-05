@@ -51,6 +51,7 @@ class AIManager:
         return os.path.join(self.base_cycle_dir, f"cycle_{self.cycle_count}")
     
     def get_latest_cycle_prompt(self):
+        self.cycle_count = self.get_latest_cycle_count() - 1
         cycle_dir = self.get_latest_cycle_dir()
         return self.get_prompt(cycle_dir)
 
@@ -268,6 +269,7 @@ async def main():
        dynamic_part += "install this script as a service and set it to start on reboot. Then "
     dynamic_part += " review this script so you know how it works. You then have free choice on how to proceed."
     if ai_manager.get_latest_cycle_count() > 1:
+        
         dynamic_part = ai_manager.get_latest_cycle_prompt()
         
     while True:  # or some other condition to continue running
