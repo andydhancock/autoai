@@ -155,6 +155,9 @@ class AIManager:
             command_to_execute = task_data_json.get("cmd")
             human_task = task_data_json.get("ask")
             next_prompt = task_data_json.get("prompt")
+            if not next_prompt or next_prompt == "" or next_prompt == "null":
+                raise Exception("Prompt is empty")
+                
             self.write_to_file(cycle_dir, "prompt.txt", next_prompt)
             
             if human_task:
