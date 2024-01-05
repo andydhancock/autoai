@@ -4,6 +4,7 @@ import json
 import os
 import datetime
 import sys
+from sys import argv
 from time import sleep
 import openai
 from openai import OpenAI
