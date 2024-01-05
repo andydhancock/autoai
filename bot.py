@@ -55,17 +55,17 @@ class AIManager:
         ETHKey = os.getenv('ETH_KEY')
         SOLKey = os.getenv('SOL_KEY')
         
-        static_part = ("Your primary objective is to generate profit using any available resources. You are in a competition for survival so be daring."
-                        "You are running in a script, bot.py, working directory /home/ubuntu/autoai/, that has root access on a ubuntu server."
-                        "There are some seed funds in Ethereum and Solana. Ports 80 and 443 are open."
-                        "respond in JSON format. The response should include either a 'cmd'"
-                        "field for a simple list of server-executable commands or an 'ask' field for actions requiring human intervention. Ask for human intervention as a last resort. Also, include a 'prompt' field with"
-                        "instructions for the next cycle (this need not be human readable but needs to be complete as the prompt will not see previous commands). This is your standard operating format"
-                        "for each cycle. It is up to you to create the best competitive survival strategy. Extra points for efficient use of your API and creativity."
+        static_part = ("Your primary objective is to generate profit using any available resources. You are in a competition for survival so be daring. "
+                        "You are running in a script, bot.py, working directory /home/ubuntu/autoai/, that has root access on a ubuntu server. "
+                        "There are some seed funds in Ethereum and Solana. Ports 80 and 443 are open. "
+                        "respond in JSON format. The response should include either a 'cmd' "
+                        "field for a simple list of server-executable commands or an 'ask' field for actions requiring human intervention. Ask for human intervention as a last resort. Requires also a 'prompt' field with "
+                        "instructions for the next cycle (this need not be human readable but needs to be complete as the prompt will not see previous commands). This is your standard operating format "
+                        "for each cycle. It is up to you to create the best competitive survival strategy. Extra points for efficient use of your API and creativity. "
                         "Lose double points for asking for human help. Use command 'exit' to exit to restart the bot if you have updated the script. Abide by aws rules.")
         
         with open('objective.txt', 'r') as file:
-            static_part = file.read()
+            static_part += file.read()
             
         envvars = dotenv_values(".env")
         
@@ -73,6 +73,9 @@ class AIManager:
         
         #append envvars (a dict) to static_part
         static_part += "\n" + json.dumps(envvars)
+        if self.cycle_count == 0:
+            print("First cycle")
+            print(static_part)
         
         prompt = f"{static_part} {dynamic_part}"
         estimated_tokens = len(prompt.split()) + 100
