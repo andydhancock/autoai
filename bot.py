@@ -276,7 +276,7 @@ class CommandExecutor:
         else:
             result = f"Command '{cmd}' failed with return code {process.returncode}."
             
-        result += "\n::stdout::\n"+process.stdout.read().decode('utf-8') + "\n::stderr::\n" + process.stderr.read().decode('utf-8')
+        result += "\n::stdout::\n"+process.stdout.read() + "\n::stderr::\n" + process.stderr.read()
         return result
 
 async def main():
