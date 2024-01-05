@@ -78,7 +78,8 @@ class AIManager:
                         "instructions for the next cycle (this need not be human readable but needs to be complete as the prompt will not see previous commands). Optionally a 'files' list field to include file contents (perhaps from command results)."
                         "This is your standard operating format for each cycle. "
                         "It is up to you to create the best competitive survival strategy. Extra points for efficient use of your API and creativity. "
-                        "Lose double points for asking for human help. Use command 'exit' to exit to restart the bot if you have updated the script. Abide by aws rules. "
+                        "Lose double points for asking for human help. Use command 'exit' to exit to restart the bot if you have updated the script. Abide by aws rules."
+                        "You should regularly check bot.py and related scripts for improvements."
                         )
         
         with open('objective.txt', 'r') as file:
@@ -132,10 +133,14 @@ class AIManager:
                 temperature=0.8,
                 response_format={ "type": "json_object" }
             )
+            logfile = open("responselog.txt", "a")
             try:
                 print(json.dumps(response.choices[0].message.content.strip(), indent=4))
+                logfile.write(json.dumps(response.choices[0].message.content.strip(), indent=4))
             except:
                 print(response)
+                logfile.write(response) 
+            logfile.close()
                 
             input_cost_per_token = 0.01 / 1000
             output_cost_per_token = 0.03 / 1000
