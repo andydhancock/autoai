@@ -92,15 +92,19 @@ class AIManager:
             print("First cycle")
             print(static_part)
             
-                        
-        #replace files with file contents
-        jsonf = json.loads(dynamic_part)
-        if jsonf and jsonf.get("files"):    
-            files = jsonf.get("files")
-            if files:
-                for file in files:
-                    with open(file, 'r') as f:
-                        dynamic_part = dynamic_part.replace(file, file+':'+f.read())
+        try:
+            #replace files with file contents
+            jsonf = json.loads(dynamic_part)
+            if jsonf and jsonf.get("files"):    
+                files = jsonf.get("files")
+                if files:
+                    for file in files:
+                        with open(file, 'r') as f:
+                            dynamic_part = dynamic_part.replace(file, file+':'+f.read())
+        except Exception as e:
+            print_error(e)
+            print("Error replacing files with file contents")
+            print(dynamic_part)
         
         prompt = f"{static_part} {dynamic_part}"
         estimated_tokens = len(prompt.split()) + 100
