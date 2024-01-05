@@ -75,21 +75,23 @@ class AIManager:
         
         #append envvars (a dict) to static_part
         static_part += "\n" + json.dumps(envvars)
-        if self.cycle_count == 0:
+        if self.cycle_count == 1:
             print("First cycle")
             print(static_part)
+            
+                        
+        #replace files with file contents
+        files = json.loads(dynamic_part).get("files")
+        if files:
+            for file in files:
+                with open(file, 'r') as f:
+                    dynamic_part = dynamic_part.replace(file, file+':'+f.read())
         
         prompt = f"{static_part} {dynamic_part}"
         estimated_tokens = len(prompt.split()) + 100
 
         if self.can_make_api_call(estimated_tokens):
-            
-            #replace files with file contents
-            files = json.loads(dynamic_part).get("files")
-            if files:
-                for file in files:
-                    with open(file, 'r') as f:
-                        dynamic_part = dynamic_part.replace(file, file+':'+f.read())
+
             
             
             
