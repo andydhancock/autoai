@@ -89,8 +89,7 @@ class AIManager:
                         
         #replace files with file contents
         json = json.loads(dynamic_part)
-        if json and
-            json.get("files"):    
+        if json and json.get("files"):    
             files = json.get("files")
             if files:
                 for file in files:
