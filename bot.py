@@ -155,9 +155,20 @@ class AIManager:
         return "\n".join(result);
 
     def get_prompt(self, cycle_dir):
+        # create a json object with the prompt and the files to read and results if files exist
+        prompt = ""
         with open(os.path.join(cycle_dir, 'prompt.txt'), 'r') as file:
-            return file.read()
-
+            prompt = file.read()
+        files = []
+        if os.path.exists(os.path.join(cycle_dir, 'files.json')):
+            with open(os.path.join(cycle_dir, 'files.json'), 'r') as file:
+                files = json.load(file)
+        results = ""
+        if os.path.exists(os.path.join(cycle_dir, 'results.json')):
+            with open(os.path.join(cycle_dir, 'results.json'), 'r') as file:
+                results = file.read()
+        return json.dumps({"prompt": prompt, "files": files, "results": results})
+    
     async def execute_cycle(self, dynamic_part):
         self.reset_daily_budget()
         cycle_dir = self.create_cycle_directory()
@@ -174,7 +185,8 @@ class AIManager:
                 raise Exception("Prompt is empty")
                 
             self.write_to_file(cycle_dir, "prompt.txt", next_prompt)
-            self.write_to_file(cycle_dir, "files.json", files_to_read)
+            if files_to_read:
+                self.write_to_file(cycle_dir, "files.json", files_to_read)
             command_output = ""
                 
             
