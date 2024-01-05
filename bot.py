@@ -3,7 +3,7 @@ import subprocess
 import json
 import os
 import datetime
-from sys import argv
+import sys
 from time import sleep
 import openai
 from openai import OpenAI
