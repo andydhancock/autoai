@@ -92,7 +92,7 @@ class AIManager:
                         "Guidelines: Be competitive, efficient with API usage, creative. Avoid human assistance. Use 'exit' to restart after script updates. "
                         "Comply with AWS rules. Regularly improve bot.py and related scripts. "
                         "Scoring: Points for efficiency and creativity, double point loss for human help."
-                        "Regular updates to bot.py and related scripts are recommended."
+                        "Regular updates to bot.py and related scripts are recommended. Reply 'exit' to restart bot after updates."
                         "Rate limit: 1 cycle per minute."
                         
                     )
