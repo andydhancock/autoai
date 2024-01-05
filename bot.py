@@ -60,9 +60,11 @@ class AIManager:
                         "There are some seed funds in Ethereum and Solana. Ports 80 and 443 are open. "
                         "respond in JSON format. The response should include either a 'cmd' "
                         "field for a simple list of server-executable commands or an 'ask' field for actions requiring human intervention. Ask for human intervention as a last resort. Requires also a 'prompt' field with "
-                        "instructions for the next cycle (this need not be human readable but needs to be complete as the prompt will not see previous commands). This is your standard operating format "
-                        "for each cycle. It is up to you to create the best competitive survival strategy. Extra points for efficient use of your API and creativity. "
-                        "Lose double points for asking for human help. Use command 'exit' to exit to restart the bot if you have updated the script. Abide by aws rules.")
+                        "instructions for the next cycle (this need not be human readable but needs to be complete as the prompt will not see previous commands). Optionally a 'files' list field to include file contents (perhaps from command results)."
+                        "This is your standard operating format for each cycle. "
+                        "It is up to you to create the best competitive survival strategy. Extra points for efficient use of your API and creativity. "
+                        "Lose double points for asking for human help. Use command 'exit' to exit to restart the bot if you have updated the script. Abide by aws rules. "
+                        )
         
         with open('objective.txt', 'r') as file:
             static_part += file.read()
@@ -81,6 +83,15 @@ class AIManager:
         estimated_tokens = len(prompt.split()) + 100
 
         if self.can_make_api_call(estimated_tokens):
+            
+            #replace files with file contents
+            files = json.loads(dynamic_part).get("files")
+            if files:
+                for file in files:
+                    with open(file, 'r') as f:
+                        dynamic_part = dynamic_part.replace(file, file+':'+f.read())
+            
+            
             
             conversation = [
                 {"role": "system", "content": static_part},
@@ -155,15 +166,19 @@ class AIManager:
             command_to_execute = task_data_json.get("cmd")
             human_task = task_data_json.get("ask")
             next_prompt = task_data_json.get("prompt")
+            files_to_read = task_data_json.get("files")
+            
             if not next_prompt or next_prompt == "" or next_prompt == "null":
                 raise Exception("Prompt is empty")
                 
             self.write_to_file(cycle_dir, "prompt.txt", next_prompt)
+            self.write_to_file(cycle_dir, "files.json", files_to_read)
+            command_output = ""
+                
             
             if human_task:
                 self.write_to_file(cycle_dir, "ask.json", {"task": human_task})
-                human_input = await self.wait_for_human_input(cycle_dir)
-                dynamic_part = json.dumps({"result": human_input, "next_prompt": next_prompt})
+                command_output = await self.wait_for_human_input(cycle_dir)
             elif command_to_execute:
                 if command_to_execute == "exit":
                     exit(0)
@@ -171,9 +186,9 @@ class AIManager:
                 self.write_to_file(cycle_dir, "cmd.json", {"command": command_to_execute})
                 command_output = await self.execute_server_task(command_to_execute)
                 self.write_to_file(cycle_dir, "results.json", {"result": command_output})
-                dynamic_part = json.dumps({"result": command_output, "next_prompt": next_prompt})
-            else:
-                dynamic_part = json.dumps({"result": "", "next_prompt": next_prompt})
+        
+                
+            dynamic_part = json.dumps({"result": command_output, "next_prompt": next_prompt, "files": files_to_read})
 
             return dynamic_part
         else:
