@@ -78,7 +78,7 @@ class AIManager:
                 temperature=0.6,
                 response_format={ "type": "json_object" }
             )
-            
+            print(response)
             input_cost_per_token = 0.01 / 1000
             output_cost_per_token = 0.03 / 1000
             total_cost_per_token = input_cost_per_token + output_cost_per_token
