@@ -76,7 +76,7 @@ class AIManager:
                         "There are some seed funds in Ethereum and Solana. Ports 80 and 443 are open. "
                         "respond in JSON format. The response should include either a 'cmd' "
                         "field for a simple list of server-executable commands or an 'ask' field for actions requiring human intervention. Ask for human intervention as a last resort. Requires also a 'prompt' field with "
-                        "instructions for the next cycle (this need not be human readable but needs to be complete as the prompt will not see previous commands). Optionally a 'files' list field to include file contents (perhaps from command results)."
+                        "instructions for the next cycle (this need not be human readable but needs to be complete as the prompt will not see previous commands). Optionally a 'files' list field to include file contents which need to be read or reviewed."
                         "This is your standard operating format for each cycle. "
                         "It is up to you to create the best competitive survival strategy. Extra points for efficient use of your API and creativity. "
                         "Lose double points for asking for human help. Use command 'exit' to exit to restart the bot if you have updated the script. Abide by aws rules."
