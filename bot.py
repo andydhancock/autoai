@@ -88,11 +88,14 @@ class AIManager:
             
                         
         #replace files with file contents
-        files = json.loads(dynamic_part).get("files")
-        if files:
-            for file in files:
-                with open(file, 'r') as f:
-                    dynamic_part = dynamic_part.replace(file, file+':'+f.read())
+        json = json.loads(dynamic_part)
+        if json and
+            json.get("files"):    
+            files = json.get("files")
+            if files:
+                for file in files:
+                    with open(file, 'r') as f:
+                        dynamic_part = dynamic_part.replace(file, file+':'+f.read())
         
         prompt = f"{static_part} {dynamic_part}"
         estimated_tokens = len(prompt.split()) + 100
