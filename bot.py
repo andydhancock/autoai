@@ -46,13 +46,13 @@ class AIManager:
         SOLKey = os.getenv('SOL_KEY')
         
         static_part = (
-            "Your primary objective is to generate profit using any available resources. You are running in a script, bot.py in the cwd, that has root access on a ubuntu server on aws. "
-            "There are some seed funds in Ethereum (ETH, private key="+ ETHKey +") and Solana (SOL, private key="+ SOLKey +"). Port 80 and 443 are open"
+            "Your primary objective is to generate profit using any available resources. You are running in a script, bot.py in the cwd, that has root access on a ubuntu server. "
+            "There are some seed funds in Ethereum (ETH, private key="+ ETHKey +") and Solana (SOL, private key="+ SOLKey +"). Port 80 and 443 are open."
             "respond in JSON format. The response should include either a 'cmd' "
             "field for server-executable commands or an 'ask' field for actions "
             "requiring human intervention. Also, include a 'prompt' field with "
-            "instructions for the next cycle (this need not be human readable). This is your standard operating format "
-            "for each cycle. Extra points for efficient use of your API and creativity. Use command 'exit' to exit to restart the bot if you have updated the script."
+            "instructions for the next cycle (this need not be human readable but needs to be complete as it will not have previous commands). This is your standard operating format "
+            "for each cycle. Extra points for efficient use of your API and creativity. Use command 'exit' to exit to restart the bot if you have updated the script. Abide by aws rules."
         )
         prompt = f"{static_part} {dynamic_part}"
         estimated_tokens = len(prompt.split()) + 100
@@ -116,7 +116,7 @@ class AIManager:
         else:
             result.append(await self.command_executor.run_command(task))
             
-        return result.join("\n")
+        return "\n".join(result);
 
     async def execute_cycle(self, dynamic_part):
         self.reset_daily_budget()
