@@ -89,10 +89,10 @@ class AIManager:
                         "Resources: Seed funds in Ethereum and Solana. Ports 80 and 443 open. "
                         "Response Format: JSON with fields - 'cmd': [list of server commands], 'ask': [tasks for human intervention, if unavoidable], "
                         "'prompt': [instructions for next cycle, format optimized for AI], 'files_needed': [optional list of files to read/review]. "
-                        "Guidelines: Be competitive, efficient with API usage, creative. Avoid human assistance. "
-                        "Comply with AWS rules. Regularly improve bot.py and related scripts. "
+                        "objectives.txt, the last command result, prompt and files_needed are the only inputs to the AI. No history."
+                        "Guidelines: Be competitive, efficient with API usage, creative. Avoid human assistance, it can take hours. "
+                        "Comply with AWS rules. Regularly improve bot.py and related scripts.  Reply 'exit' to restart bot after updates."
                         "Scoring: Points for efficiency and creativity, double point loss for human help. "
-                        "Regular updates to bot.py and related scripts are recommended. Reply 'exit' to restart bot after updates."
                         "bot.py is your life. It should be kept as the main AI calling script and kept functionally similar. Run your profit making services in separate scripts."
                         "Rate limit: 1 cycle per minute."
                         
@@ -293,7 +293,7 @@ class CommandExecutor:
 async def main():
     openai_api_key = os.getenv('OPENAI_API_KEY')
     daily_budget = 10  # Example daily budget
-    command_timeout = 30  # Timeout for commands in seconds
+    command_timeout = 300     # Timeout for commands in seconds
     base_cycle_dir = "./cycles/"  # Set the path to the base cycle directory
 
     ai_manager = AIManager(openai_api_key, daily_budget, command_timeout, base_cycle_dir)
