@@ -257,17 +257,17 @@ class AIManager:
             command_output = ""
                 
             
-            if human_task:
-                self.write_to_file(cycle_dir, "ask.json", {"task": human_task})
-                command_output = await self.wait_for_human_input(cycle_dir)
-            elif command_to_execute:
+            if command_to_execute:
                 if command_to_execute == "exit":
                     exit(0)
                 
                 self.write_to_file(cycle_dir, "cmd.json", {"command": command_to_execute})
                 command_output = await self.execute_server_task(command_to_execute)
                 self.write_to_file(cycle_dir, "results.json", {"result": command_output})
-        
+            elif human_task:
+                self.write_to_file(cycle_dir, "ask.json", {"task": human_task})
+                command_output = await self.wait_for_human_input(cycle_dir)
+            
                 
             dynamic_part = json.dumps({"result": command_output, "next_prompt": next_prompt, "files_needed": files_to_read})
 
