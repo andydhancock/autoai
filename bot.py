@@ -145,7 +145,7 @@ class AIManager:
                 dynamic_part = json.dumps(dpjson)
         
         #log dynamic part in human readable format with real new lines not \n
-        logfile.write("====== CYCLE " + str(self.cycle_count) + " ======" + len(prompt) + "\n"+ dynamic_part.replace("\\n", "\n"))
+        logfile.write("====== CYCLE " + str(self.cycle_count) + " ======" + str(len(prompt)) + "\n"+ dynamic_part.replace("\\n", "\n"))
         
         estimated_tokens = len(prompt.split()) + 100
 
