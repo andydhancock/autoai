@@ -342,7 +342,20 @@ async def main():
         except Exception as e:
             ai_manager.cycle_count -= 1
             print_error(e)
-            sleep(5)
+            #check for 429 error and " Please try again in X.XXXs." time
+            if "429" in str(e):
+                if  "Please try again in" in str(e):
+                    sleeptime = float(str(e).split("Please try again in ")[1].split("s.")[0])
+                    print(f"429 error, sleeping {sleeptime} seconds")
+                    #check is a number
+                    if sleeptime > 0:
+                        sleep(sleeptime)
+                    else:
+                        print("429 error, sleeping 60 seconds")
+                        sleep(60)
+            else:
+                print("Error, sleeping 60 seconds")
+            sleep(60)
 
 # Run the main function asynchronously
 asyncio.run(main())
