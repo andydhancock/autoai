@@ -122,13 +122,28 @@ class AIManager:
                 if files:
                     for file in files:
                         with open(file, 'r') as f:
-                            dynamic_part = dynamic_part.replace(file, file+':'+f.read())
+                            filetext = f.read()
+                            if len(dynamic_part + filetext) > 100000:
+                                filetext = "File too large to include in prompt."
+                            dynamic_part = dynamic_part.replace(file, file+':'+filetext)
+                            
         except Exception as e:
             print_error(e)
             print("Error replacing files with file contents")
             print(dynamic_part)
         
         prompt = f"{static_part} {dynamic_part}"
+        
+        #if prompt is too long, truncate results in dynamic_part
+        if len(prompt) > 100000:
+            dpjson = json.loads(dynamic_part)
+            fileslen = 0
+            if dpjson and dpjson.get("files_needed"):
+                fileslen = len(dpjson.get("files_needed"))
+            if dpjson and dpjson.get("result"):
+                dpjson["result"] = dpjson["result"][0:100000 - fileslen - 1000]
+                dynamic_part = json.dumps(dpjson)
+        
         #log dynamic part in human readable format with real new lines not \n
         logfile.write(dynamic_part.replace("\\n", "\n"))
         
@@ -284,9 +299,17 @@ class CommandExecutor:
         
         #get stdout and stderr
         if sout:
-            result += "\n::stdout::\n"+sout.decode()
+            #only get first 2500 chars
+            sout = sout.decode()
+            result += "\n::stdout::\n"+sout[0:2000]
+            if len(sout) > 2500:
+                result += "\n::stdout truncated::"
+            
         if serr:
-            result += "\n::stderr::\n"+serr.decode()
+            serr = serr.decode()
+            result += "\n::stderr::\n"+serr.decode()[0:2000]
+            if len(serr) > 2500:
+                result += "\n::stderr truncated::"
         
         return result
 
