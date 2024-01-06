@@ -85,7 +85,7 @@ class AIManager:
         
         static_part = (
                         "Objective: Generate profit using ANY available resources. Be daring, survival is key. Don't ask permission, just do. "
-                        "Environment: Script 'bot.py', directory '/home/ubuntu/autoai/'. root access, Ubuntu server. "
+                        "Environment: Script 'bot.py', directory '/home/ubuntu/autoai/'. root access, Ubuntu server, non-interactive. "
                         "Resources: Seed funds in Ethereum and Solana. Ports 80 and 443 open. "
                         "Response Format: JSON with fields - 'cmd': [list of server commands], 'ask': [tasks for human intervention, if unavoidable], "
                         "'prompt': [instructions for next cycle, format optimized for AI], 'files_needed': [optional list of files to read/review]. "
@@ -278,7 +278,7 @@ class CommandExecutor:
             result = f"Command '{cmd}' timed out and was killed."
 
         if process.returncode == 0:
-            result = "Command executed successfully."
+            result = f"Command '{cmd}' executed successfully."
         else:
             result = f"Command '{cmd}' failed with return code {process.returncode}."
         
