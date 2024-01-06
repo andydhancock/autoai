@@ -140,8 +140,12 @@ class AIManager:
             fileslen = 0
             if dpjson and dpjson.get("files_needed"):
                 fileslen = len(dpjson.get("files_needed"))
-            if dpjson and dpjson.get("result"):
-                dpjson["result"] = dpjson["result"][0:100000 - fileslen - 1000]
+            if dpjson and dpjson.get("results"):
+                #if results is json, dump it to string
+                if type(dpjson["results"]) == dict:
+                    dpjson["results"] = json.dumps(dpjson["results"])
+                #truncate results to 1000 chars
+                dpjson["results"] = dpjson["results"][0:100000 - fileslen - 1000] + "\n::results truncated::"
                 dynamic_part = json.dumps(dpjson)
         
         #log dynamic part in human readable format with real new lines not \n
