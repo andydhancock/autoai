@@ -304,13 +304,21 @@ class CommandExecutor:
         #get stdout and stderr
         if sout:
             #only get first 2500 chars
-            sout = sout.decode()
+            try:
+                sout = sout.decode()
+            except:
+                sout = str(sout)
+                
             result += "\n::stdout::\n"+sout[0:2000]
             if len(sout) > 2500:
                 result += "\n::stdout truncated::"
             
         if serr:
-            serr = serr.decode()
+            try:
+                serr = serr.decode()
+            except:
+                serr = str(serr)
+                
             result += "\n::stderr::\n"+serr.decode()[0:2000]
             if len(serr) > 2500:
                 result += "\n::stderr truncated::"
