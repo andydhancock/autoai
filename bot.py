@@ -264,7 +264,8 @@ class AIManager:
                 self.write_to_file(cycle_dir, "cmd.json", {"command": command_to_execute})
                 command_output = await self.execute_server_task(command_to_execute)
                 self.write_to_file(cycle_dir, "results.json", {"result": command_output})
-            elif human_task:
+            
+            if human_task:
                 self.write_to_file(cycle_dir, "ask.json", {"task": human_task})
                 command_output = await self.wait_for_human_input(cycle_dir)
             
