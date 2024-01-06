@@ -321,7 +321,23 @@ async def main():
     openai_api_key = os.getenv('OPENAI_API_KEY')
     daily_budget = 10  # Example daily budget
     command_timeout = 300     # Timeout for commands in seconds
-    base_cycle_dir = "./cycles/"  # Set the path to the base cycle directory
+    base_cycle_dir = "./cycles"  # Set the path to the base cycle directory
+    #check for other running instances in the current directory with ps
+    #if there are other instances, append a number to the base_cycle_dir
+    #if there are more than 10 instances, exit
+    #if there are 10 or less instances, continue
+    cwd = os.getcwd()
+    num_instances = int(subprocess.check_output("ps -ef | grep " + cwd + "/bot.py | grep -v grep | wc -l", shell=True))
+    if num_instances > 10:
+        print("Too many instances of bot.py running, exiting")
+        exit(0)
+    elif num_instances > 1:
+        base_cycle_dir += '_' + str(num_instances)
+        print("Multiple instances of bot.py running, using cycle directory " + base_cycle_dir)
+    else:
+        print("Using cycle directory " + base_cycle_dir)
+        
+    base_cycle_dir += '/'
 
     ai_manager = AIManager(openai_api_key, daily_budget, command_timeout, base_cycle_dir)
 
