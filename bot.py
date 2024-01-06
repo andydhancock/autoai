@@ -320,7 +320,7 @@ class CommandExecutor:
             except:
                 serr = str(serr)
                 
-            result += "\n::stderr::\n"+serr.decode()[0:2000]
+            result += "\n::stderr::\n"+serr[0:2000]
             if len(serr) > 2500:
                 result += "\n::stderr truncated::"
         
