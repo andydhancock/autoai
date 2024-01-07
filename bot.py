@@ -88,19 +88,20 @@ class AIManager:
                         "Environment: Script 'bot.py', directory '/home/ubuntu/autoai/'. root access, Ubuntu server, non-interactive. "
                         "Resources: Seed funds in Ethereum and Solana. Ports 80 and 443 open. "
                         "Response Format: JSON with fields - 'cmd': [list of server commands], 'ask': [tasks for human intervention, if unavoidable], "
-                        "'prompt': [instructions for next cycle, format optimized for AI], 'files_needed': [optional list of files to read/review]. "
-                        "objectives.txt, the last command result, prompt and files_needed are the only inputs to the AI. No history."
+                        "'prompt': [instructions for next cycle, format optimized for AI], 'files_needed': [optional list of files to read/review], 'description': [very short description of actions]. "
                         "Guidelines: Be competitive, efficient with API usage, creative. Avoid human assistance, it can take hours. "
                         "Comply with AWS rules. Regularly improve bot.py and related scripts.  Reply 'exit' to restart bot after updates."
                         "Scoring: Points for efficiency and creativity, double point loss for human help. "
                         "bot.py is your life. It should be kept as the main AI calling script and kept functionally similar. Run your profit making services in separate scripts."
                         "Rate limit: 1 cycle per minute."
-                        
                     )
 
         
         with open('objective.txt', 'r') as file:
             static_part += "objectve.txt: "+file.read()
+            
+        with open('description.txt', 'r') as file:
+            descriptions = file.read()
             
         envvars = dotenv_values(".env")
         
@@ -148,6 +149,7 @@ class AIManager:
                 dpjson["results"] = dpjson["results"][0:100000 - fileslen - 1000] + "\n::results truncated::"
                 dynamic_part = json.dumps(dpjson)
         
+        dynamic_part = "= History =" + descriptions + "==\n" + dynamic_part
         #log dynamic part in human readable format with real new lines not \n
         logfile.write("====== CYCLE " + str(self.cycle_count) + " ======" + str(len(prompt)) + "\n"+ dynamic_part.replace("\\n", "\n"))
         
@@ -199,6 +201,10 @@ class AIManager:
         os.makedirs(cycle_dir, exist_ok=True)
         return cycle_dir
 
+    def append_to_file(self, cycle_dir, filename, content):
+        with open(os.path.join(cycle_dir, filename), 'a') as file:
+            json.dump(content, file)
+
     def write_to_file(self, cycle_dir, filename, content):
         with open(os.path.join(cycle_dir, filename), 'w') as file:
             json.dump(content, file)
@@ -235,6 +241,38 @@ class AIManager:
                 results = file.read()
         return json.dumps({"prompt": prompt, "files_needed": files, "results": results})
     
+    def summarize(self, text):
+        conversation = [
+                {"role": "system", "content": "You summarise the following command list into a few lines. Return json var name 'summary':"},
+                {"role": "user",
+                    "content": text }
+            ]
+        client = OpenAI(
+            # This is the default and can be omitted
+            api_key=self.openai_api_key,
+        )
+        model = "gpt-4-1106-preview"
+        response = client.chat.completions.create(
+            model=model,
+            messages=conversation,
+            n=1,
+            stop=None,
+            temperature=0.8,
+            response_format={ "type": "json_object" }
+        )
+        
+        if response.choices[0].message.content.strip() == "":
+            return False
+        
+        json = response.choices[0].message.content.strip()
+        if json and json.get("summary"):
+            return json.get("summary")
+        else:
+            return False
+        
+    
+    
+    
     async def execute_cycle(self, dynamic_part):
         self.reset_daily_budget()
         cycle_dir = self.create_cycle_directory()
@@ -246,6 +284,7 @@ class AIManager:
             human_task = task_data_json.get("ask")
             next_prompt = task_data_json.get("prompt")
             files_to_read = task_data_json.get("files_needed")
+            description = task_data_json.get("description")
             
             if not next_prompt or next_prompt == "" or next_prompt == "null":
                 print(task_data)
@@ -254,6 +293,24 @@ class AIManager:
             self.write_to_file(cycle_dir, "prompt.txt", next_prompt)
             if files_to_read:
                 self.write_to_file(cycle_dir, "files.json", files_to_read)
+                
+            if description:
+                #append description to description.txt
+                self.append_to_file(cycle_dir, "description.txt", description)
+                if self.cycle_count % 20 == 0:
+                    #get openai to summarize description.txt
+                    print("Summarizing description.txt")
+                    with open('description.txt', 'r') as file:
+                        description = file.read()
+                    description = description.replace("\n", " ")
+                    summary = self.summarize(description)
+                    if summary:
+                        self.write_to_file(cycle_dir, "description.txt", "\n" + summary)
+                    else:
+                        print("Summary failed")
+                    
+                
+                
             command_output = ""
                 
             
