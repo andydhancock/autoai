@@ -288,7 +288,8 @@ class AIManager:
                     return json.get("summary")
                 
             return False
-        except:
+        except  Exception as e:
+            print_error(e)
             return False
     
     
@@ -325,6 +326,8 @@ class AIManager:
                     description = self.read_file(self.descriptions_file)
                     summary = self.summarize(description)
                     if summary:
+                        #last 1000 chars of summary
+                        summary = summary[-1000:]
                         self.write_to_file(cycle_dir, self.descriptions_file, "\n" + summary)
                     else:
                         print("Summary failed")
