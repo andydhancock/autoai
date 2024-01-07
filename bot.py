@@ -91,7 +91,7 @@ class AIManager:
                         "Resources: Seed funds in Ethereum and Solana. Ports 80 and 443 open. "
                         "Response Format: JSON with fields - 'cmd': [list of server commands], 'ask': [tasks for human intervention, if unavoidable], "
                         "'prompt': [instructions for next cycle, format optimized for AI.], 'files_needed': [optional list of files to read/review], 'description': [very short description of actions], 'sleep' [optional time in secs to wait for command]. "
-                        "Guidelines: Be competitive, efficient with API usage, creative. Avoid human assistance, it can take hours. "
+                        "Guidelines: Be competitive, efficient with API usage, creative. Avoid human assistance, if something isn't working try something else. "
                         "Comply with AWS rules. Regularly improve bot.py and related scripts.  Reply 'exit' to restart bot after updates."
                         "Scoring: Points for efficiency and creativity, double point loss for human help. "
                         "bot.py is your life. It should be kept as the main AI calling script and kept functionally similar. Run your profit making services in separate scripts."
