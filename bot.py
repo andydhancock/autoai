@@ -344,7 +344,7 @@ class AIManager:
                 if sleeptime:
                     sleep(sleeptime)
             
-            if human_task:
+            if human_task and human_task != "" and human_task != "None":
                 self.write_to_file(cycle_dir, "ask.json", {"task": human_task})
                 command_output = await self.wait_for_human_input(cycle_dir)
             
