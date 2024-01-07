@@ -151,7 +151,7 @@ class AIManager:
                 dpjson["results"] = dpjson["results"][0:100000 - fileslen - 1000] + "\n::results truncated::"
                 dynamic_part = json.dumps(dpjson)
         
-        dynamic_part = "= History =" + descriptions + "==\n" + dynamic_part
+        dynamic_part = "= Prev cycles =" + descriptions + "==\n" + dynamic_part
         #log dynamic part in human readable format with real new lines not \n
         logfile.write("====== CYCLE " + str(self.cycle_count) + " ======" + str(len(prompt)) + "\n"+ dynamic_part.replace("\\n", "\n"))
         
@@ -285,7 +285,7 @@ class AIManager:
             if jsontxt:
                 loaded_json = json.loads(jsontxt)
                 if loaded_json and loaded_json.get("summary"):
-                    return json.get("summary")
+                    return loaded_json.get("summary")
                 
             return False
         except  Exception as e:
