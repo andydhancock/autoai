@@ -90,7 +90,7 @@ class AIManager:
                         "Environment: Script 'bot.py', directory '/home/ubuntu/autoai/'. root access, Ubuntu server, non-interactive. "
                         "Resources: Seed funds in Ethereum and Solana. Ports 80 and 443 open. "
                         "Response Format: JSON with fields - 'cmd': [list of server commands], 'ask': [tasks for human intervention, if unavoidable], "
-                        "'prompt': [instructions for next cycle, format optimized for AI], 'files_needed': [optional list of files to read/review], 'description': [very short description of actions], 'sleep' [optional time in secs to wait for command]. "
+                        "'prompt': [instructions for next cycle, format optimized for AI.], 'files_needed': [optional list of files to read/review], 'description': [very short description of actions], 'sleep' [optional time in secs to wait for command]. "
                         "Guidelines: Be competitive, efficient with API usage, creative. Avoid human assistance, it can take hours. "
                         "Comply with AWS rules. Regularly improve bot.py and related scripts.  Reply 'exit' to restart bot after updates."
                         "Scoring: Points for efficiency and creativity, double point loss for human help. "
@@ -280,11 +280,14 @@ class AIManager:
             return False
         
         json = response.choices[0].message.content.strip()
-        if json and json.get("summary"):
-            return json.get("summary")
-        else:
+        print(json)
+        try:
+            if json and json.get("summary"):
+                return json.get("summary")
+            else:
+                return False
+        except:
             return False
-        
     
     
     
