@@ -104,7 +104,8 @@ class AIManager:
             
         
         descriptions = self.read_file(self.descriptions_file)
-            
+        #last 1000 chars of descriptions
+        descriptions = descriptions[-1000:] 
         envvars = dotenv_values(".env")
         
         print(envvars)
@@ -326,9 +327,7 @@ class AIManager:
                     description = self.read_file(self.descriptions_file)
                     summary = self.summarize(description)
                     if summary:
-                        #last 1000 chars of summary
-                        summary = summary[-1000:]
-                        self.write_to_file(cycle_dir, self.descriptions_file, "\n" + summary)
+                        self.write_to_file('', self.descriptions_file, summary)
                     else:
                         print("Summary failed")
                     
