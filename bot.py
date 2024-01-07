@@ -88,7 +88,7 @@ class AIManager:
                         "Environment: Script 'bot.py', directory '/home/ubuntu/autoai/'. root access, Ubuntu server, non-interactive. "
                         "Resources: Seed funds in Ethereum and Solana. Ports 80 and 443 open. "
                         "Response Format: JSON with fields - 'cmd': [list of server commands], 'ask': [tasks for human intervention, if unavoidable], "
-                        "'prompt': [instructions for next cycle, format optimized for AI], 'files_needed': [optional list of files to read/review], 'description': [very short description of actions]. "
+                        "'prompt': [instructions for next cycle, format optimized for AI], 'files_needed': [optional list of files to read/review], 'description': [very short description of actions], 'sleep' [optional time in secs to wait for command]. "
                         "Guidelines: Be competitive, efficient with API usage, creative. Avoid human assistance, it can take hours. "
                         "Comply with AWS rules. Regularly improve bot.py and related scripts.  Reply 'exit' to restart bot after updates."
                         "Scoring: Points for efficiency and creativity, double point loss for human help. "
@@ -285,6 +285,7 @@ class AIManager:
             next_prompt = task_data_json.get("prompt")
             files_to_read = task_data_json.get("files_needed")
             description = task_data_json.get("description")
+            sleeptime = task_data_json.get("sleep")
             
             if not next_prompt or next_prompt == "" or next_prompt == "null":
                 print(task_data)
@@ -321,6 +322,8 @@ class AIManager:
                 self.write_to_file(cycle_dir, "cmd.json", {"command": command_to_execute})
                 command_output = await self.execute_server_task(command_to_execute)
                 self.write_to_file(cycle_dir, "results.json", {"result": command_output})
+                if sleeptime:
+                    sleep(sleeptime)
             
             if human_task:
                 self.write_to_file(cycle_dir, "ask.json", {"task": human_task})
@@ -350,9 +353,9 @@ class CommandExecutor:
         try:
             sout, serr = await asyncio.wait_for(process.communicate(), timeout=self.timeout)            
         except asyncio.TimeoutError:
-            process.kill()
-            sout, serr = await process.communicate()
-            result = f"Command '{cmd}' timed out and was killed."
+            #process.kill()
+            #sout, serr = await process.communicate()
+            result = f"Command '{cmd}' timed out, left running Process#:"+str(process.pid)
 
         if process.returncode == 0:
             result = f"Command '{cmd}' executed successfully."
