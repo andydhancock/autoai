@@ -103,8 +103,7 @@ class AIManager:
             static_part += "objectve.txt: "+file.read()
             
         
-        with open(self.descriptions_file, 'r') as file:
-            descriptions = read_f
+        descriptions = self.read_file(self.descriptions_file)
             
         envvars = dotenv_values(".env")
         
@@ -317,9 +316,8 @@ class AIManager:
                 if self.cycle_count % 20 == 0:
                     #get openai to summarize description.txt
                     print("Summarizing description.txt")
-                    with open(self.descriptions_file, 'r') as file:
-                        description = file.read()
-                    description = description.replace("\n", " ")
+                    
+                    description = self.read_file(self.descriptions_file)
                     summary = self.summarize(description)
                     if summary:
                         self.write_to_file(cycle_dir, self.descriptions_file, "\n" + summary)
