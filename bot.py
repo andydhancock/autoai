@@ -37,6 +37,8 @@ class AIManager:
         self.command_executor = CommandExecutor(timeout=command_timeout)
         self.base_cycle_dir = base_cycle_dir
         self.cycle_count = self.get_latest_cycle_count()
+        self.descriptions_file = base_cycle_dir + "descriptions.txt"
+
         
 
     def get_latest_cycle_count(self):
@@ -100,7 +102,7 @@ class AIManager:
         with open('objective.txt', 'r') as file:
             static_part += "objectve.txt: "+file.read()
             
-        with open('description.txt', 'r') as file:
+        with open(self.descriptions_file, 'r') as file:
             descriptions = file.read()
             
         envvars = dotenv_values(".env")
@@ -201,9 +203,14 @@ class AIManager:
         os.makedirs(cycle_dir, exist_ok=True)
         return cycle_dir
 
-    def append_to_file(self, cycle_dir, filename, content):
-        with open(os.path.join(cycle_dir, filename), 'a') as file:
-            json.dump(content, file)
+    def append_to_file(self, filename, content):
+        #if doesn't exist, create file
+        if not os.path.exists(filename):
+            with open(filename, 'w') as file:
+                file.write(content)
+        else:
+            with open(filename, 'a') as file:
+                file.write(content)
 
     def write_to_file(self, cycle_dir, filename, content):
         with open(os.path.join(cycle_dir, filename), 'w') as file:
@@ -297,16 +304,16 @@ class AIManager:
                 
             if description:
                 #append description to description.txt
-                self.append_to_file(cycle_dir, "description.txt", description)
+                self.append_to_file( self.descriptions_file, description)
                 if self.cycle_count % 20 == 0:
                     #get openai to summarize description.txt
                     print("Summarizing description.txt")
-                    with open('description.txt', 'r') as file:
+                    with open(self.descriptions_file, 'r') as file:
                         description = file.read()
                     description = description.replace("\n", " ")
                     summary = self.summarize(description)
                     if summary:
-                        self.write_to_file(cycle_dir, "description.txt", "\n" + summary)
+                        self.write_to_file(cycle_dir, self.descriptions_file, "\n" + summary)
                     else:
                         print("Summary failed")
                     
