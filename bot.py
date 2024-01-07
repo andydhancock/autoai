@@ -218,7 +218,7 @@ class AIManager:
                 file.write(content)
         else:
             with open(filename, 'a') as file:
-                file.write(content)
+                file.write("\n" + content)
 
     def write_to_file(self, cycle_dir, filename, content):
         with open(os.path.join(cycle_dir, filename), 'w') as file:
