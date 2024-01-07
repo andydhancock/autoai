@@ -102,8 +102,9 @@ class AIManager:
         with open('objective.txt', 'r') as file:
             static_part += "objectve.txt: "+file.read()
             
+        
         with open(self.descriptions_file, 'r') as file:
-            descriptions = file.read()
+            descriptions = read_f
             
         envvars = dotenv_values(".env")
         
@@ -202,6 +203,14 @@ class AIManager:
         cycle_dir = os.path.join(self.base_cycle_dir, f"cycle_{self.cycle_count}")
         os.makedirs(cycle_dir, exist_ok=True)
         return cycle_dir
+
+    def read_file(self, filename):
+        try:
+            with open(filename, 'r') as file:
+                return file.read()
+        except:
+            return ""
+        
 
     def append_to_file(self, filename, content):
         #if doesn't exist, create file
