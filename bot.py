@@ -206,7 +206,7 @@ class AIManager:
     def read_file(self, filename):
         try:
             with open(filename, 'r') as file:
-                return file.read()
+                return file.read() 
         except:
             return ""
         
