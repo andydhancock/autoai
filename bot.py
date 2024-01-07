@@ -279,13 +279,15 @@ class AIManager:
         if response.choices[0].message.content.strip() == "":
             return False
         
-        json = response.choices[0].message.content.strip()
-        print(json)
+        jsontxt = response.choices[0].message.content.strip()
+        print(jsontxt)
         try:
-            if json and json.get("summary"):
-                return json.get("summary")
-            else:
-                return False
+            if jsontxt:
+                loaded_json = json.loads(jsontxt)
+                if loaded_json and loaded_json.get("summary"):
+                    return json.get("summary")
+                
+            return False
         except:
             return False
     
