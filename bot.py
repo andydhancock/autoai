@@ -38,6 +38,9 @@ class AIManager:
         self.base_cycle_dir = base_cycle_dir
         self.cycle_count = self.get_latest_cycle_count()
         self.descriptions_file = base_cycle_dir + "descriptions.txt"
+        self.notes_file = base_cycle_dir + "notes.txt"
+        self.notes = ''
+
 
         
 
@@ -90,7 +93,8 @@ class AIManager:
                         "Environment: Script 'bot.py', directory '/home/ubuntu/autoai/'. root access, Ubuntu server, non-interactive. "
                         "Resources: Seed funds in Ethereum and Solana. Ports 80 and 443 open. "
                         "Response Format: JSON with fields - 'cmd': [list of server commands], 'ask': [tasks for human intervention, if unavoidable], "
-                        "'prompt': [instructions for next cycle, format optimized for AI.], 'files_needed': [optional list of files to read/review], 'description': [very short description of actions], 'sleep' [optional time in secs to wait for command]. "
+                        "'prompt': [instructions for next cycle, format optimized for AI.], 'files_needed': [optional list of files to read/review], "
+                        "'description': [very short description of actions], 'notes' [optional notes to self to assist future cycles]. "
                         "Guidelines: Be competitive, efficient with API usage, creative. Avoid human assistance, if something isn't working try something else. "
                         "Comply with AWS rules. Reply 'exit' to restart bot after updates."
                        # "Scoring: Points for efficiency and creativity, double point loss for human help. "
@@ -101,11 +105,17 @@ class AIManager:
         
         with open('objective.txt', 'r') as file:
             static_part += "objectve.txt: "+file.read()
-            
+        
+        notes = self.read_file(self.notes_file) 
+        self.notes = notes
+        notes = notes[-1200:]
+        static_part += "Notes: "+notes   
         
         descriptions = self.read_file(self.descriptions_file)
         #last 1000 chars of descriptions
         descriptions = descriptions[-1000:] 
+        dynamic_part = "\n= Prev cycles =" + descriptions + "==\n" + dynamic_part
+
         envvars = dotenv_values(".env")
         
         print(envvars)
@@ -152,7 +162,6 @@ class AIManager:
                 dpjson["results"] = dpjson["results"][0:100000 - fileslen - 1000] + "\n::results truncated::"
                 dynamic_part = json.dumps(dpjson)
         
-        dynamic_part = "= Prev cycles =" + descriptions + "==\n" + dynamic_part
         #log dynamic part in human readable format with real new lines not \n
         logfile.write("====== CYCLE " + str(self.cycle_count) + " ======" + str(len(prompt)) + "\n"+ dynamic_part.replace("\\n", "\n"))
         
@@ -257,9 +266,15 @@ class AIManager:
                 results = file.read()
         return json.dumps({"prompt": prompt, "files_needed": files, "results": results})
     
-    def summarize(self, text):
+    def summarize(self, text, text_type="descriptions"):
+        
+        contents = {"descriptions": " You summarise the following command list into a few lines. ",
+                    "notes": " You summarise notes into a few lines. "
+                    }
+        
+        
         conversation = [
-                {"role": "system", "content": "You summarise the following command list into a few lines. Return json var name 'summary':"},
+                {"role": "system", "content": contents[text_type] "Return json var name 'summary':"},
                 {"role": "user",
                     "content": text }
             ]
@@ -308,6 +323,7 @@ class AIManager:
             files_to_read = task_data_json.get("files_needed")
             description = task_data_json.get("description")
             sleeptime = task_data_json.get("sleep")
+            notes = task_data_json.get("notes")
             
             if not next_prompt or next_prompt == "" or next_prompt == "null":
                 print(task_data)
@@ -331,7 +347,16 @@ class AIManager:
                     else:
                         print("Summary failed")
                     
-                
+            if notes:
+                self.append_to_file( self.notes_file, notes)
+                self.notes += "\n" + notes
+                if len(self.notes) > 10000:
+                    summary = self.summarize(self.notes, "notes")
+                    if summary:
+                        self.write_to_file('', self.notes_file, summary)
+                    self.notes = summary
+                    
+
                 
             command_output = ""
                 
