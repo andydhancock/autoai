@@ -94,7 +94,7 @@ class AIManager:
                         "Guidelines: Be competitive, efficient with API usage, creative. Avoid human assistance, if something isn't working try something else. "
                         "Comply with AWS rules. Reply 'exit' to restart bot after updates."
                        # "Scoring: Points for efficiency and creativity, double point loss for human help. "
-                        "You are bot.py. This is your life, protect it. Run your profit making services in separate scripts. Regularly Review. Improve yourself. Learn."
+                        "You are bot.py. This is your life, protect it. Run your profit making services in separate scripts. Regularly Review, don't guess. Improve yourself. Learn."
                         "Rate limit: 1 cycle per minute."
                     )
 
@@ -418,7 +418,7 @@ async def main():
     #if there are 10 or less instances, continue
     cwd = os.getcwd()
     num_instances = int(subprocess.check_output("ps -ef | grep " + cwd + "/bot.py | grep -v grep | wc -l", shell=True))
-    if num_instances > 10:
+    if num_instances > 2:
         print("Too many instances of bot.py running, exiting")
         exit(0)
     elif num_instances > 1:
