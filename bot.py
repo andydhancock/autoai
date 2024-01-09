@@ -94,7 +94,7 @@ class AIManager:
                         "Resources: Seed funds in Ethereum and Solana. Ports 80 and 443 open. "
                         "Response Format: JSON with fields - 'cmd': [list of server commands], 'ask': [tasks for human intervention, if unavoidable], "
                         "'prompt': [instructions for next cycle, format optimized for AI.], 'files_needed': [optional list of files to read/review], "
-                        "'description': [very short description of actions], 'notes' [optional notes to self to assist future cycles]. "
+                        "'description': [very short description of actions], 'notes' [optional notes/instructions to assist future cycles]. "
                         "Guidelines: Be competitive, efficient with API usage, creative. Avoid human assistance, if something isn't working try something else. "
                         "Comply with AWS rules. Reply 'exit' to restart bot after updates."
                        # "Scoring: Points for efficiency and creativity, double point loss for human help. "
@@ -268,13 +268,13 @@ class AIManager:
     
     def summarize(self, text, text_type="descriptions"):
         
-        contents = {"descriptions": " You summarise the following command list into a few lines. ",
-                    "notes": " You summarise notes into a few lines. "
+        contents = {"descriptions": " You summarise the following command list into a few lines:",
+                    "notes": " You summarise notes into a few lines"
                     }
         
         
         conversation = [
-                {"role": "system", "content": contents[text_type] "Return json var name 'summary':"},
+                {"role": "system", "content": contents[text_type] + ". Return json var name 'summary'. For AI comprehension, not human."},
                 {"role": "user",
                     "content": text }
             ]
