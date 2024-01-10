@@ -39,6 +39,7 @@ class AIManager:
         self.cycle_count = self.get_latest_cycle_count()
         self.descriptions_file = base_cycle_dir + "descriptions.txt"
         self.notes_file = base_cycle_dir + "notes.txt"
+        self.objective_file = base_cycle_dir + "objective.txt"
         self.notes = ''
 
 
@@ -102,9 +103,10 @@ class AIManager:
                         "Rate limit: 1 cycle per minute."
                     )
 
+        objective = self.read_file(self.objective_file)
         
-        with open('objective.txt', 'r') as file:
-            static_part += "objectve.txt: "+file.read()
+        if objective:
+            static_part += "objectve.txt: "+objective
         
         notes = self.read_file(self.notes_file) 
         self.notes = notes
