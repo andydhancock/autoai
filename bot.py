@@ -207,7 +207,8 @@ class AIManager:
             self.spent_today += (len(response.choices[0].message.content.split()) + len(prompt.split())) * total_cost_per_token
             return response.choices[0].message.content.strip()
         else:
-            return "API call limit reached for today."
+            raise Exception("API call limit reached for today.")
+        logfile.close()
         logfile.close()
 
 
